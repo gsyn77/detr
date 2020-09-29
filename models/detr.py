@@ -57,15 +57,21 @@ class DETR(nn.Module):
                                 dictionnaries containing the two above keys for each decoder layer.
         """
         if isinstance(samples, (list, torch.Tensor)):
+            print(f'samples: {samples.shape} ')
             samples = nested_tensor_from_tensor_list(samples)
         features, pos = self.backbone(samples)
 
         src, mask = features[-1].decompose()
         assert mask is not None
-        hs = self.transformer(self.input_proj(src), mask, self.query_embed.weight, pos[-1])[0]
+        # print(f'Nested samples: {samples.tensors.shape} masks: {samples.mask.shape}')
+        # print(f'src: {src.shape} mask: {mask.shape} pos: {pos[-1].shape}')
+        pr = self.input_proj(src)
+        hs = self.transformer(pr, mask, self.query_embed.weight, pos[-1])[0]
+        # print(f'proj: {pr.shape} hs: {hs.shape}')
 
         outputs_class = self.class_embed(hs)
         outputs_coord = self.bbox_embed(hs).sigmoid()
+        # print(f'outputs_class: {outputs_class.shape} outputs_coord: {outputs_coord.shape}')
         out = {'pred_logits': outputs_class[-1], 'pred_boxes': outputs_coord[-1]}
         if self.aux_loss:
             out['aux_outputs'] = self._set_aux_loss(outputs_class, outputs_coord)
