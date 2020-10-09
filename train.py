@@ -292,8 +292,16 @@ def main(args):
     optimizer = torch.optim.AdamW(param_dicts, lr=args.lr,
                                   weight_decay=args.weight_decay)
     lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, args.lr_drop)
-    train_json = '/opt/ocr-data/icpr-2018/train.json'
-    val_json = '/opt/ocr-data/icpr-2018/val.json'
+    train_json = [
+        '/content/icpr2018/train.json',
+        '/content/das/train.json',
+        '/content/ctw1500/train.json',
+    ]
+    val_json = [
+        '/content/icpr2018/val.json',
+        '/content/das/val.json',
+        '/content/ctw1500/val.json',
+    ]
     dataset_train = SimpleJsonDataset(json_path=train_json, mode='train', transforms=make_coco_transforms('train'))
     dataset_val = SimpleJsonDataset(json_path=val_json, mode='val', transforms=make_coco_transforms('val'))
 
