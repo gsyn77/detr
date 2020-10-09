@@ -76,6 +76,7 @@ class JsonDataset(Dataset):
         if isinstance(json_path, list):
             img_root = [os.path.join(os.path.dirname(p), mode) for p in json_path]
             for j_path, i_root in zip(json_path, img_root):
+                print(i_root, j_path)
                 d.extend(parse_textds_json(json_path=j_path, image_root=i_root))
         else:
             image_root = os.path.join(os.path.dirname(json_path), mode)
